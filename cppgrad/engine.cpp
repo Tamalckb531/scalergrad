@@ -8,7 +8,7 @@
 
 using namespace std;
 
-class Value
+class Value : public enable_shared_from_this<Value>
 {
 public:
     double data;
@@ -34,7 +34,34 @@ public:
     {
         return "Value(data)= " + to_string(data);
     }
+
+    shared_ptr<Value> operator+(const shared_ptr<Value> &other)
+    {
+        auto out = make_shared<Value>(
+            this->data + other->data,
+            set<shared_ptr<Value>>{
+                shared_from_this(),
+                other},
+            "+");
+        out->_backward = [this, other, out]()
+        {
+            this->grad += 1.0 * out->grad;
+            other->grad += 1.0 * out->grad;
+        };
+
+        return out;
+    }
+
+    shared_ptr<Value> operator+(double other)
+    {
+        return *this + make_shared<Value>(other);
+    }
 };
+
+shared_ptr<Value> operator+(double a, const shared_ptr<Value> &b)
+{
+    return b->operator+(make_shared<Value>(a));
+}
 
 ostream &operator<<(ostream &os, const Value &v)
 {

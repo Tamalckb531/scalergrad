@@ -19,3 +19,10 @@ struct Value : enable_shared_from_this<Value>
 
     Value(double data, vector<shared_ptr<Value>> children = {}, string operation = "", string label = "") : data(data), _prev(move(children)), _operation(move(operation)), label(move(label)) {}
 };
+
+using ValuePtr = shared_ptr<Value>;
+
+inline ValuePtr make_value(double d)
+{
+    return make_shared<Value>(d);
+}

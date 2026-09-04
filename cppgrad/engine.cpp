@@ -22,14 +22,14 @@ struct Value : enable_shared_from_this<Value>
 
 using ValuePtr = shared_ptr<Value>;
 
-inline ValuePtr make_value(double d)
+inline ValuePtr make_value(double d, string label = "")
 {
-    return make_shared<Value>(d);
+    return make_shared<Value>(d, vector<ValuePtr>{}, "", label);
 }
 
 inline ostream &operator<<(ostream &os, const ValuePtr &v)
 {
-    os << "Value(data) = " << v->data;
+    os << v->label << " Value(data) = " << v->data;
     return os;
 }
 
@@ -50,3 +50,24 @@ inline ValuePtr operator+(const ValuePtr &a, const ValuePtr &b)
 inline ValuePtr operator+(const ValuePtr &a, double b) { return a + make_value(b); }
 //? 5 + a
 inline ValuePtr operator+(double a, const ValuePtr &b) { return make_value(a) + b; }
+
+int main()
+{
+    auto a = make_value(5, "a");
+    auto b = make_value(3, "b");
+
+    auto c = a + b;
+    c->label = "c";
+
+    auto d = a + 5;
+    d->label = "d";
+
+    auto e = 5 + a;
+    e->label = "e";
+
+    cout << c << endl;
+    cout << d << endl;
+    cout << e << endl;
+
+    return 0;
+}

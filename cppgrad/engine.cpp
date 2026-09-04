@@ -29,4 +29,14 @@ public:
                              _prev(move(children)),
                              _operation(move(op)),
                              _label(move(label)) {}
+
+    string repr() const
+    {
+        return "Value(data)= " + to_string(data);
+    }
 };
+
+ostream &operator<<(ostream &os, const Value &v)
+{
+    return os << v.repr();
+}

@@ -26,3 +26,9 @@ inline ValuePtr make_value(double d)
 {
     return make_shared<Value>(d);
 }
+
+inline ostream &operator<<(ostream &os, const ValuePtr &v)
+{
+    os << "Value(data) = " << v->data;
+    return os;
+}

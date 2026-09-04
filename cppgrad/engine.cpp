@@ -32,3 +32,21 @@ inline ostream &operator<<(ostream &os, const ValuePtr &v)
     os << "Value(data) = " << v->data;
     return os;
 }
+
+//! + operation
+//? For a + b
+inline ValuePtr operator+(const ValuePtr &a, const ValuePtr &b)
+{
+    auto out = make_shared<Value>(a->data + b->data, vector<ValuePtr>{a, b}, "+");
+    ValuePtr a_ = a, b_ = b, out_ = out;
+    out->_backward = [a_, b_, out_]()
+    {
+        a_->grad += 1.0 * out_->grad;
+        b_->grad += 1.0 * out_->grad;
+    };
+    return out;
+}
+//? a + 5
+inline ValuePtr operator+(const ValuePtr &a, double b) { return a + make_value(b); }
+//? 5 + a
+inline ValuePtr operator+(double a, const ValuePtr &b) { return make_value(a) + b; }

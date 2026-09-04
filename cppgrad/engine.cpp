@@ -6,3 +6,16 @@
 #include <functional>
 #include <iostream>
 #include <string>
+using namespace std;
+
+struct Value : enable_shared_from_this<Value>
+{
+    double data;
+    double grad = 0.0;
+    function<void()> _backward = []() {};
+    vector<shared_ptr<Value>> _prev;
+    string _operation;
+    string label;
+
+    Value(double data, vector<shared_ptr<Value>> children = {}, string operation = "", string label = "") : data(data), _prev(move(children)), _operation(move(operation)), label(move(label)) {}
+};

@@ -19,4 +19,14 @@ private:
     set<shared_ptr<Value>> _prev;
     string _operation;
     string _label;
+
+public:
+    Value(
+        double data,
+        set<shared_ptr<Value>> children = {},
+        string op = "",
+        string label = "") : data(data),
+                             _prev(move(children)),
+                             _operation(move(op)),
+                             _label(move(label)) {}
 };

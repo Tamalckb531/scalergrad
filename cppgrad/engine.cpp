@@ -123,6 +123,42 @@ inline ValuePtr tanh(const ValuePtr &a)
     return out;
 }
 
+//! exp
+inline ValuePtr exp(const ValuePtr &a)
+{
+    auto out = make_shared<Value>(exp(a->data), vector<ValuePtr>{a}, "exp");
+    ValuePtr a_ = a, out_ = out;
+    out->_backward = [a_, out_]()
+    {
+        a_->grad += out_->data * out_->grad;
+    };
+    return out;
+}
+
+//! Back Propagation
+inline void backward(const ValuePtr &root)
+{
+    vector<ValuePtr> topo;
+    set<Value *> visited;
+
+    function<void(const ValuePtr &)> build_topo = [&](const ValuePtr &v)
+    {
+        if (visited.find(v.get()) == visited.end())
+        {
+            visited.insert(v.get());
+            for (auto &child : v->_prev)
+                build_topo(child);
+            topo.push_back(v);
+        }
+    };
+    build_topo(root);
+
+    root->grad = 1.0;
+    //? reverse order calling
+    for (auto it = topo.rbegin(); it != topo.rend(); ++it)
+        (*it)->_backward();
+}
+
 int main()
 {
     auto a = make_value(10, "a");
@@ -137,7 +173,7 @@ int main()
     auto e = 10 / a;
     e->label = "e";
 
-    auto f = tanh(1.5);
+    auto f = exp(a);
 
     cout << c << endl;
     cout << d << endl;

@@ -110,7 +110,7 @@ inline ValuePtr operator/(const ValuePtr &a, double b) { return a / make_value(b
 inline ValuePtr operator/(double a, const ValuePtr &b) { return make_value(a) / b; }
 
 //! Tanh
-inline ValuePtr tanh_(const ValuePtr &a)
+inline ValuePtr tanh(const ValuePtr &a)
 {
     double x = a->data;
     double t = (exp(2 * x) - 1) / (exp(2 * x) + 1);
@@ -137,7 +137,7 @@ int main()
     auto e = 10 / a;
     e->label = "e";
 
-    auto f = tanh_(a);
+    auto f = tanh(1.5);
 
     cout << c << endl;
     cout << d << endl;

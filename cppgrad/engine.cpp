@@ -69,6 +69,18 @@ inline ValuePtr operator*(const ValuePtr &a, double b) { return a * make_value(b
 //? 5 * a
 inline ValuePtr operator*(double a, const ValuePtr &b) { return make_value(a) * b; }
 
+//! pow
+inline ValuePtr pow(const ValuePtr &a, double n)
+{
+    auto out = make_shared<Value>(pow(a->data, n), vector<ValuePtr>{a}, "**" + to_string(n));
+    ValuePtr a_ = a, out_ = out;
+    out->_backward = [a_, out_, n]()
+    {
+        a_->grad += n * pow(a_->data, n - 1) * out_->grad;
+    };
+    return out;
+}
+
 int main()
 {
     auto a = make_value(5, "a");
@@ -83,6 +95,7 @@ int main()
     auto e = 5 * a;
     e->label = "e";
 
+    cout << pow(a, 2) << endl;
     cout << c << endl;
     cout << d << endl;
     cout << e << endl;

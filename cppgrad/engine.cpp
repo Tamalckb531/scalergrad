@@ -51,18 +51,36 @@ inline ValuePtr operator+(const ValuePtr &a, double b) { return a + make_value(b
 //? 5 + a
 inline ValuePtr operator+(double a, const ValuePtr &b) { return make_value(a) + b; }
 
+//! * operation
+//? For a * b
+inline ValuePtr operator*(const ValuePtr &a, const ValuePtr &b)
+{
+    auto out = make_shared<Value>(a->data * b->data, vector<ValuePtr>{a, b}, "*");
+    ValuePtr a_ = a, b_ = b, out_ = out;
+    out->_backward = [a_, b_, out_]()
+    {
+        a_->grad += b_->grad * out_->grad;
+        b_->grad += a_->grad * out_->grad;
+    };
+    return out;
+}
+//? a * 5
+inline ValuePtr operator*(const ValuePtr &a, double b) { return a * make_value(b); }
+//? 5 * a
+inline ValuePtr operator*(double a, const ValuePtr &b) { return make_value(a) * b; }
+
 int main()
 {
     auto a = make_value(5, "a");
     auto b = make_value(3, "b");
 
-    auto c = a + b;
+    auto c = a * b;
     c->label = "c";
 
-    auto d = a + 5;
+    auto d = a * 5;
     d->label = "d";
 
-    auto e = 5 + a;
+    auto e = 5 * a;
     e->label = "e";
 
     cout << c << endl;

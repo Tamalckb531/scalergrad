@@ -81,6 +81,12 @@ inline ValuePtr pow(const ValuePtr &a, double n)
     return out;
 }
 
+//! Negation
+inline ValuePtr operator-(const ValuePtr &a)
+{
+    return a * make_value(-1);
+}
+
 int main()
 {
     auto a = make_value(5, "a");

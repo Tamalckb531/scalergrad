@@ -109,6 +109,20 @@ inline ValuePtr operator/(const ValuePtr &a, double b) { return a / make_value(b
 //? 5 / a
 inline ValuePtr operator/(double a, const ValuePtr &b) { return make_value(a) / b; }
 
+//! Tanh
+inline ValuePtr tanh_(const ValuePtr &a)
+{
+    double x = a->data;
+    double t = (exp(2 * x) - 1) / (exp(2 * x) + 1);
+    auto out = make_shared<Value>(t, vector<ValuePtr>{a}, "tanh");
+    ValuePtr a_ = a, out_ = out;
+    out->_backward = [a_, out_, t]()
+    {
+        a_->grad += (1 - t * t) * out_->grad;
+    };
+    return out;
+}
+
 int main()
 {
     auto a = make_value(10, "a");
@@ -123,9 +137,12 @@ int main()
     auto e = 10 / a;
     e->label = "e";
 
+    auto f = tanh_(a);
+
     cout << c << endl;
     cout << d << endl;
     cout << e << endl;
+    cout << f << endl;
 
     return 0;
 }

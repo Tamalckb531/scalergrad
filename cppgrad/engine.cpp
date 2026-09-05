@@ -87,21 +87,33 @@ inline ValuePtr operator-(const ValuePtr &a)
     return a * make_value(-1);
 }
 
+//! Subtraction
+//? for a - b
+inline ValuePtr operator-(const ValuePtr &a, const ValuePtr &b)
+{
+    return a + (-b);
+}
+//? a - 5
+inline ValuePtr operator-(const ValuePtr &a, double b) { return a - make_value(b); }
+//? 5 - a
+inline ValuePtr operator-(double a, const ValuePtr &b) { return make_value(a) - b; }
+
 int main()
 {
     auto a = make_value(5, "a");
     auto b = make_value(3, "b");
 
-    auto c = a * b;
+    auto c = a - b;
     c->label = "c";
 
-    auto d = a * 5;
+    auto d = a - 3;
     d->label = "d";
 
-    auto e = 5 * a;
+    auto e = 10 - a;
     e->label = "e";
 
     cout << pow(a, 2) << endl;
+    cout << -(a) << endl;
     cout << c << endl;
     cout << d << endl;
     cout << e << endl;

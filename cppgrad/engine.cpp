@@ -292,6 +292,17 @@ public:
             neurons.emplace_back(number_of_input);
         }
     }
+
+    //? __call__ function
+    vector<ValuePtr> operator()(const vector<ValuePtr> &x)
+    {
+        vector<ValuePtr> outs; //? Basically an array of tanh values from the neurons
+        for (auto &n : neurons)
+        {
+            outs.push_back(n(x));
+        }
+        return outs;
+    }
 };
 
 int main()

@@ -316,6 +316,12 @@ public:
     }
 };
 
+class MLP
+{
+public:
+    vector<Layer> layers;
+};
+
 int main()
 {
     // inputs x1, x2

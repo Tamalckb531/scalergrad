@@ -10,6 +10,7 @@
 #include <sstream>
 #include <unordered_map>
 #include <cstdio>
+#include <random>
 using namespace std;
 
 struct Value : enable_shared_from_this<Value>
@@ -239,6 +240,13 @@ inline void draw_dot(const ValuePtr &root, const std::string &filename = "graph"
                      "(e.g. `apt install graphviz`) and run:\n  "
                   << cmd << std::endl;
     }
+}
+
+inline double random_uniform(double lo = -1.0, double hi = 1.0)
+{
+    static mt19937 gen(random_device{}());
+    uniform_real_distribution<double> dist(lo, hi);
+    return dist(gen);
 }
 
 int main()

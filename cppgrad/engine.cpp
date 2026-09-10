@@ -249,6 +249,13 @@ inline double random_uniform(double lo = -1.0, double hi = 1.0)
     return dist(gen);
 }
 
+class Neuron
+{
+public:
+    vector<ValuePtr> w;
+    ValuePtr b;
+};
+
 int main()
 {
     // inputs x1, x2

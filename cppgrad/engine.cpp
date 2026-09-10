@@ -284,6 +284,14 @@ class Layer
 {
 public:
     vector<Neuron> neurons;
+
+    Layer(int number_of_input, int number_of_neurons)
+    {
+        for (int i = 0; i < number_of_neurons; i++)
+        {
+            neurons.emplace_back(number_of_input);
+        }
+    }
 };
 
 int main()

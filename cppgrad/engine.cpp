@@ -261,7 +261,7 @@ public:
         bias = make_value(random_uniform());
     }
 
-    // __call__ function
+    //? __call__ function
     ValuePtr operator()(const vector<ValuePtr> &input)
     {
         ValuePtr activation = bias;
@@ -271,6 +271,13 @@ public:
         }
         return tanh(activation);
     };
+
+    vector<ValuePtr> parameters()
+    {
+        vector<ValuePtr> params = weight;
+        params.push_back(bias);
+        return params;
+    }
 };
 
 int main()

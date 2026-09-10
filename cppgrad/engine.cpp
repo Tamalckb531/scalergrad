@@ -303,6 +303,17 @@ public:
         }
         return outs;
     }
+
+    vector<ValuePtr> parameters()
+    {
+        vector<ValuePtr> params;
+        for (auto &n : neurons)
+        {
+            auto p = n.parameters();
+            params.insert(params.end(), p.begin(), p.end());
+        }
+        return params;
+    }
 };
 
 int main()

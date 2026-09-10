@@ -252,8 +252,14 @@ inline double random_uniform(double lo = -1.0, double hi = 1.0)
 class Neuron
 {
 public:
-    vector<ValuePtr> w;
-    ValuePtr b;
+    vector<ValuePtr> weight;
+    ValuePtr bias;
+    Neuron(int number_of_input)
+    {
+        for (int i = 0; i < number_of_input; i++)
+            weight.push_back(make_value(random_uniform()));
+        bias = make_value(random_uniform());
+    }
 };
 
 int main()

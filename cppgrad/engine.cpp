@@ -280,6 +280,12 @@ public:
     }
 };
 
+class Layer
+{
+public:
+    vector<Neuron> neurons;
+};
+
 int main()
 {
     // inputs x1, x2

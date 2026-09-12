@@ -320,6 +320,17 @@ class MLP
 {
 public:
     vector<Layer> layers;
+
+    MLP(int number_of_input, vector<int> &number_of_neurons_per_layer)
+    {
+        vector<int> network_layer_sizes;
+        network_layer_sizes.push_back(number_of_input);
+        for (int n : number_of_neurons_per_layer)
+            network_layer_sizes.push_back(n);
+
+        for (size_t i = 0; i < number_of_neurons_per_layer.size(); i++)
+            layers.emplace_back(network_layer_sizes[i], network_layer_sizes[i + 1]);
+    }
 };
 
 int main()

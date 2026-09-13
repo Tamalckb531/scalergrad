@@ -339,6 +339,17 @@ public:
             x = layer(x);
         return x;
     }
+
+    vector<ValuePtr> parameters()
+    {
+        vector<ValuePtr> params;
+        for (auto &layer : layers)
+        {
+            auto p = layer.parameters();
+            params.insert(params.end(), p.begin(), p.end());
+        }
+        return params;
+    }
 };
 
 int main()

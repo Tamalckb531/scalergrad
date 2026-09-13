@@ -331,6 +331,14 @@ public:
         for (size_t i = 0; i < number_of_neurons_per_layer.size(); i++)
             layers.emplace_back(network_layer_sizes[i], network_layer_sizes[i + 1]);
     }
+
+    //__call__
+    vector<ValuePtr> operator()(vector<ValuePtr> x)
+    {
+        for (auto &layer : layers)
+            x = layer(x);
+        return x;
+    }
 };
 
 int main()

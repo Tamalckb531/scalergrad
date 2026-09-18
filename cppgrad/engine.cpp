@@ -332,12 +332,39 @@ public:
             layers.emplace_back(network_layer_sizes[i], network_layer_sizes[i + 1]);
     }
 
-    //__call__
-    vector<ValuePtr> operator()(vector<ValuePtr> x)
+private:
+    //? Internal forward pass.
+    //? Everything inside the network works with ValuePtr.
+    vector<ValuePtr> forward(const vector<ValuePtr> &x)
     {
+        vector<ValuePtr> output = x;
         for (auto &layer : layers)
-            x = layer(x);
-        return x;
+            output = layer(output);
+        return output;
+    }
+
+public:
+    //__call__
+    ValuePtr operator()(vector<double> x)
+    {
+        vector<ValuePtr> input;
+
+        for (double value : x)
+            input.push_back(make_value(value));
+
+        vector<ValuePtr> output = forward(input);
+
+        if (output.size() != 1)
+        {
+            throw runtime_error("MLP operator() expects exactly one output neuron");
+        }
+        return output[0];
+    }
+
+    //? For when client wants explicitly all outputs
+    vector<ValuePtr> operator()(const vector<ValuePtr> &x)
+    {
+        return forward(x);
     }
 
     vector<ValuePtr> parameters()

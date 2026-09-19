@@ -1,3 +1,4 @@
+#pragma once
 #include "engine.hpp"
 
 inline void trace(const ValuePtr &root,

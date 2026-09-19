@@ -1,3 +1,4 @@
+#pragma once
 #include "engine.hpp"
 
 inline double random_uniform(double lo = -1.0, double hi = 1.0)

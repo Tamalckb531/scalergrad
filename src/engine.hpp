@@ -10,31 +10,29 @@
 #include <sstream>
 #include <unordered_map>
 #include <cstdio>
-#include <vector>
 #include <random>
 
-using namespace std;
-
-struct Value : enable_shared_from_this<Value>
+struct Value : std::enable_shared_from_this<Value>
 {
     double data;
     double grad = 0.0;
-    function<void()> _backward = []() {};
-    vector<shared_ptr<Value>> _prev;
-    string _operation;
-    string label;
+    std::function<void()> _backward = []() {};
+    std::vector<std::shared_ptr<Value>> _prev;
+    std::string _operation;
+    std::string label;
 
-    Value(double data, vector<shared_ptr<Value>> children = {}, string operation = "", string label = "") : data(data), _prev(move(children)), _operation(move(operation)), label(move(label)) {}
+    Value(double data, std::vector<std::shared_ptr<Value>> children = {}, std::string operation = "", std::string label = "")
+        : data(data), _prev(std::move(children)), _operation(std::move(operation)), label(std::move(label)) {}
 };
 
-using ValuePtr = shared_ptr<Value>;
+using ValuePtr = std::shared_ptr<Value>;
 
-inline ValuePtr make_value(double d, string label = "")
+inline ValuePtr make_value(double d, std::string label = "")
 {
-    return make_shared<Value>(d, vector<ValuePtr>{}, "", label);
+    return std::make_shared<Value>(d, std::vector<ValuePtr>{}, "", label);
 }
 
-inline ostream &operator<<(ostream &os, const ValuePtr &v)
+inline std::ostream &operator<<(std::ostream &os, const ValuePtr &v)
 {
     os << v->label << " Value(data) = " << v->data;
     return os;
@@ -44,7 +42,7 @@ inline ostream &operator<<(ostream &os, const ValuePtr &v)
 //? For a + b
 inline ValuePtr operator+(const ValuePtr &a, const ValuePtr &b)
 {
-    auto out = make_shared<Value>(a->data + b->data, vector<ValuePtr>{a, b}, "+");
+    auto out = std::make_shared<Value>(a->data + b->data, std::vector<ValuePtr>{a, b}, "+");
     ValuePtr a_ = a, b_ = b, out_ = out;
     out->_backward = [a_, b_, out_]()
     {
@@ -62,7 +60,7 @@ inline ValuePtr operator+(double a, const ValuePtr &b) { return make_value(a) + 
 //? For a * b
 inline ValuePtr operator*(const ValuePtr &a, const ValuePtr &b)
 {
-    auto out = make_shared<Value>(a->data * b->data, vector<ValuePtr>{a, b}, "*");
+    auto out = std::make_shared<Value>(a->data * b->data, std::vector<ValuePtr>{a, b}, "*");
     ValuePtr a_ = a, b_ = b, out_ = out;
     out->_backward = [a_, b_, out_]()
     {
@@ -79,7 +77,7 @@ inline ValuePtr operator*(double a, const ValuePtr &b) { return make_value(a) * 
 //! pow
 inline ValuePtr pow(const ValuePtr &a, double n)
 {
-    auto out = make_shared<Value>(std::pow(a->data, n), vector<ValuePtr>{a}, "**" + to_string(n));
+    auto out = std::make_shared<Value>(std::pow(a->data, n), std::vector<ValuePtr>{a}, "**" + std::to_string(n));
     ValuePtr a_ = a, out_ = out;
     out->_backward = [a_, out_, n]()
     {
@@ -121,7 +119,7 @@ inline ValuePtr tanh(const ValuePtr &a)
 {
     double x = a->data;
     double t = (std::exp(2 * x) - 1) / (std::exp(2 * x) + 1);
-    auto out = make_shared<Value>(t, vector<ValuePtr>{a}, "tanh");
+    auto out = std::make_shared<Value>(t, std::vector<ValuePtr>{a}, "tanh");
     ValuePtr a_ = a, out_ = out;
     out->_backward = [a_, out_, t]()
     {
@@ -133,7 +131,7 @@ inline ValuePtr tanh(const ValuePtr &a)
 //! exp
 inline ValuePtr exp(const ValuePtr &a)
 {
-    auto out = make_shared<Value>(std::exp(a->data), vector<ValuePtr>{a}, "exp");
+    auto out = std::make_shared<Value>(std::exp(a->data), std::vector<ValuePtr>{a}, "exp");
     ValuePtr a_ = a, out_ = out;
     out->_backward = [a_, out_]()
     {
@@ -145,10 +143,10 @@ inline ValuePtr exp(const ValuePtr &a)
 //! Back Propagation
 inline void backward(const ValuePtr &root)
 {
-    vector<ValuePtr> topo;
-    set<Value *> visited;
+    std::vector<ValuePtr> topo;
+    std::set<Value *> visited;
 
-    function<void(const ValuePtr &)> build_topo = [&](const ValuePtr &v)
+    std::function<void(const ValuePtr &)> build_topo = [&](const ValuePtr &v)
     {
         if (visited.find(v.get()) == visited.end())
         {

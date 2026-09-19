@@ -1,5 +1,14 @@
 #pragma once
 #include "engine.hpp"
+#include <set>
+#include <unordered_map>
+#include <utility>
+#include <string>
+#include <sstream>
+#include <fstream>
+#include <iostream>
+#include <cstdio>
+#include <cstdint>
 
 inline void trace(const ValuePtr &root,
                   std::set<Value *> &nodes,

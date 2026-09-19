@@ -1,6 +1,6 @@
 #include <iostream>
-#include <NeuralNet.hpp>
-#include <visualization.hpp>
+#include "NeuralNet.hpp"
+#include "visualization.hpp"
 
 using namespace std;
 int main()

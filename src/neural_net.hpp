@@ -1,17 +1,20 @@
 #pragma once
 #include "engine.hpp"
+#include <vector>
+#include <random>
+#include <stdexcept>
 
 inline double random_uniform(double lo = -1.0, double hi = 1.0)
 {
-    static mt19937 gen(random_device{}());
-    uniform_real_distribution<double> dist(lo, hi);
+    static std::mt19937 gen(std::random_device{}());
+    std::uniform_real_distribution<double> dist(lo, hi);
     return dist(gen);
 }
 
 class Neuron
 {
 public:
-    vector<ValuePtr> weight;
+    std::vector<ValuePtr> weight;
     ValuePtr bias;
     Neuron(int number_of_input)
     {
@@ -21,7 +24,7 @@ public:
     }
 
     //? __call__ function
-    ValuePtr operator()(const vector<ValuePtr> &input)
+    ValuePtr operator()(const std::vector<ValuePtr> &input)
     {
         ValuePtr activation = bias;
         for (size_t i = 0; i < weight.size(); i++)
@@ -31,9 +34,9 @@ public:
         return tanh(activation);
     };
 
-    vector<ValuePtr> parameters()
+    std::vector<ValuePtr> parameters()
     {
-        vector<ValuePtr> params = weight;
+        std::vector<ValuePtr> params = weight;
         params.push_back(bias);
         return params;
     }
@@ -42,7 +45,7 @@ public:
 class Layer
 {
 public:
-    vector<Neuron> neurons;
+    std::vector<Neuron> neurons;
 
     Layer(int number_of_input, int number_of_neurons)
     {
@@ -53,9 +56,9 @@ public:
     }
 
     //? __call__ function
-    vector<ValuePtr> operator()(const vector<ValuePtr> &x)
+    std::vector<ValuePtr> operator()(const std::vector<ValuePtr> &x)
     {
-        vector<ValuePtr> outs; //? Basically an array of tanh values from the neurons
+        std::vector<ValuePtr> outs; //? Basically an array of tanh values from the neurons
         for (auto &n : neurons)
         {
             outs.push_back(n(x));
@@ -63,9 +66,9 @@ public:
         return outs;
     }
 
-    vector<ValuePtr> parameters()
+    std::vector<ValuePtr> parameters()
     {
-        vector<ValuePtr> params;
+        std::vector<ValuePtr> params;
         for (auto &n : neurons)
         {
             auto p = n.parameters();
@@ -78,11 +81,11 @@ public:
 class MLP
 {
 public:
-    vector<Layer> layers;
+    std::vector<Layer> layers;
 
-    MLP(int number_of_input, const vector<int> &number_of_neurons_per_layer)
+    MLP(int number_of_input, const std::vector<int> &number_of_neurons_per_layer)
     {
-        vector<int> network_layer_sizes;
+        std::vector<int> network_layer_sizes;
         network_layer_sizes.push_back(number_of_input);
         for (int n : number_of_neurons_per_layer)
             network_layer_sizes.push_back(n);
@@ -94,9 +97,9 @@ public:
 private:
     //? Internal forward pass.
     //? Everything inside the network works with ValuePtr.
-    vector<ValuePtr> forward(const vector<ValuePtr> &x)
+    std::vector<ValuePtr> forward(const std::vector<ValuePtr> &x)
     {
-        vector<ValuePtr> output = x;
+        std::vector<ValuePtr> output = x;
         for (auto &layer : layers)
             output = layer(output);
         return output;
@@ -104,31 +107,31 @@ private:
 
 public:
     //__call__
-    ValuePtr operator()(vector<double> x)
+    ValuePtr operator()(std::vector<double> x)
     {
-        vector<ValuePtr> input;
+        std::vector<ValuePtr> input;
 
         for (double value : x)
             input.push_back(make_value(value));
 
-        vector<ValuePtr> output = forward(input);
+        std::vector<ValuePtr> output = forward(input);
 
         if (output.size() != 1)
         {
-            throw runtime_error("MLP operator() expects exactly one output neuron");
+            throw std::runtime_error("MLP operator() expects exactly one output neuron");
         }
         return output[0];
     }
 
     //? For when client wants explicitly all outputs
-    vector<ValuePtr> operator()(const vector<ValuePtr> &x)
+    std::vector<ValuePtr> operator()(const std::vector<ValuePtr> &x)
     {
         return forward(x);
     }
 
-    vector<ValuePtr> parameters()
+    std::vector<ValuePtr> parameters()
     {
-        vector<ValuePtr> params;
+        std::vector<ValuePtr> params;
         for (auto &layer : layers)
         {
             auto p = layer.parameters();

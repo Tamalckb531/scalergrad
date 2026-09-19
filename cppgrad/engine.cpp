@@ -321,7 +321,7 @@ class MLP
 public:
     vector<Layer> layers;
 
-    MLP(int number_of_input, vector<int> &number_of_neurons_per_layer)
+    MLP(int number_of_input, const vector<int> &number_of_neurons_per_layer)
     {
         vector<int> network_layer_sizes;
         network_layer_sizes.push_back(number_of_input);
@@ -381,33 +381,65 @@ public:
 
 int main()
 {
-    // inputs x1, x2
-    auto x1 = make_value(2.0, "x1");
-    auto x2 = make_value(0.0, "x2");
-    // weights w1, w2
-    auto w1 = make_value(-3.0, "w1");
-    auto w2 = make_value(1.0, "w2");
-    // bias
-    auto b = make_value(6.8813735870195432, "b");
+    MLP n(3, {4, 4, 1});
 
-    // x1*w1 + x2*w2 + b
-    auto x1w1 = x1 * w1;
-    x1w1->label = "x1w1";
-    auto x2w2 = x2 * w2;
-    x2w2->label = "x2w2";
-    auto x1w1x2w2 = x1w1 + x2w2;
-    x1w1x2w2->label = "x1w1x2w2";
-    auto n = x1w1x2w2 + b;
-    n->label = "n";
+    //? input data
+    vector<vector<double>> xi = {
+        {2.0, 3.0, -1.0},
+        {3.0, -1.0, 0.5},
+        {0.5, 1.0, -1.0},
+        {1.0, 1.0, -1.0},
+    };
 
-    auto e = exp(2.0 * n);
-    e->label = "e";
-    auto o = (e - 1.0) / (e + 1.0);
-    o->label = "o";
+    //? target data
+    vector<double> target = {1.0, -1.0, -1.0, 1.0};
 
-    backward(o);
+    vector<ValuePtr> prediction;
+    ValuePtr final_loss;
 
-    draw_dot(o, "neuron_graph");
+    for (int k = 0; k < 1000; k++)
+    {
+        //? Forward pass
+        prediction.clear();
+        for (const auto &x : xi)
+            prediction.push_back(n(x));
+
+        //? loss calculation
+        ValuePtr loss = make_value(0.0, "loss");
+        for (size_t i = 0; i < target.size(); i++)
+        {
+            ValuePtr difference = prediction[i] - target[i];
+            loss = loss + pow(difference, 2);
+        }
+
+        //? zero grad
+        for (auto &p : n.parameters())
+            p->grad = 0.0;
+
+        //? Backward pass
+        backward(loss);
+
+        //? Gradient descent
+        for (auto &p : n.parameters())
+        {
+            p->data += -0.01 * p->grad;
+        }
+
+        if (k == 999)
+        {
+            final_loss = loss;
+            final_loss->label = loss->label;
+        }
+    }
+    cout << "Loss : " << final_loss->data << endl;
+    cout << "Prediction data : " << "{ ";
+    for (const auto &pred : prediction)
+    {
+        cout << pred->data << " ";
+    }
+    cout << " }" << endl;
+
+    draw_dot(final_loss);
 
     return 0;
 }

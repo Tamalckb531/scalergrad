@@ -26,7 +26,7 @@ cmake -B build -DCMAKE_TOOLCHAIN_FILE=/path/to/vcpkg/scripts/buildsystems/vcpkg.
 > **Note:** `scalergrad`'s vcpkg port has been submitted to the official [microsoft/vcpkg](https://github.com/microsoft/vcpkg) registry and is currently awaiting maintainer review. Until the PR is merged, `vcpkg install scalergrad` will fail with a "package not found" error, since it isn't in the registry yet. In the meantime, you can install it using vcpkg's **overlay ports** feature, which points vcpkg at a local port directory instead of the official registry:
 >
 > ```bash
-> git clone https://github.com/<your-github-username>/scalergrad.git
+> git clone https://github.com/Tamalckb531/scalergrad.git
 > vcpkg install scalergrad --overlay-ports=./scalergrad/ports
 > ```
 >
